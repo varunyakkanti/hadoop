@@ -42,7 +42,7 @@ public class wtf1 {
             	friend2.set(Integer.parseInt(st.nextToken()));
                     context.write(friend2, friend1);
                     
-               System.out.println(friend2+"  "+friend1);
+              System.out.println(friend2+"  "+friend1);
             }
         }
     }
@@ -55,7 +55,7 @@ public class wtf1 {
 
         // A private class to describe a recommendation.
         // A recommendation has a friend id and a number of friends in common.
-        private static class Recommendation {
+      /*  private static class Recommendation {
             
             // Attributes
             private int friendId;
@@ -92,42 +92,45 @@ public class wtf1 {
                 // Recommendation was not found!
                 return null;
             }
-        }
+        }*/
 
         // The reduce method
         public void reduce(IntWritable key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             // user stores the id of the user for which we are searching for recommendations
             IntWritable user = key;
             // recommendations will store all the recommendations for user 'user'
-            ArrayList<Recommendation> recommendations = new ArrayList<Recommendation>();
+            ArrayList<Integer> recommendations = new ArrayList<Integer>();
             // Builds the recommendation array
             while (values.iterator().hasNext()) {
                 int userWithCommonFriend = values.iterator().next().get();
-                Recommendation p = Recommendation.find(userWithCommonFriend, recommendations);
-                if (p == null)
+                //Recommendation p = Recommendation.find(userWithCommonFriend, recommendations);
+               // if (p == null)
                     // no recommendation exists for user 'userWithCommonFriend'. Let's create one.
-                    recommendations.add(new Recommendation(userWithCommonFriend));
-                else
+                    recommendations.add(userWithCommonFriend);
+               // else
                     // there is already a recommendation for user 'userWithCommonFriend'. Let;s
                     // increment the number of friends in common.
-                    p.addCommonFriend();
-            }
+                   // p.addCommonFriend();
+           // }
             // Sorts the recommendation array by number of common friends
             // See javadoc on Comparator at https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html
-            recommendations.sort(new Comparator<Recommendation>() {
-                public int compare(Recommendation t, Recommendation t1) {
-                    return -Integer.compare(t.getNCommonFriends(), t1.getNCommonFriends());
-                }
-            });
+           // recommendations.sort(new Comparator<Recommendation>() {
+              //  public int compare(Recommendation t, Recommendation t1) {
+                //    return -Integer.compare(t.getNCommonFriends(), t1.getNCommonFriends());
+              //  }
+           // });
             // Builds the output string that will be emitted
-            StringBuffer sb = new StringBuffer(""); // Using a StringBuffer is more efficient than concatenating strings
+           /* StringBuffer sb = new StringBuffer(""); // Using a StringBuffer is more efficient than concatenating strings
             for (int i = 0; i < recommendations.size() && i < 10; i++) {
                 Recommendation p = recommendations.get(i);
                 sb.append(p.toString()+" ");
             }
             Text result = new Text(sb.toString());
             context.write(user, result);
-        }
+        */}
+            System.out.println("recommendations");
+            
+    }
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
