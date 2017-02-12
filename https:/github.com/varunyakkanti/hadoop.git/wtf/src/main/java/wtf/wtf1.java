@@ -125,7 +125,7 @@ public class wtf1 {
     }
     public static class CountReducer1 extends Reducer<IntWritable, IntWritable, IntWritable, Text> {
 
-    	 // A private class to describe a recommendation.
+    	// A private class to describe a recommendation.
         // A recommendation has a friend id and a number of friends in common.
         private static class Recommendation {
 
