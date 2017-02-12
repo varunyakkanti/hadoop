@@ -52,27 +52,46 @@ public class wtf1 {
     }
     public static class AllPairsMapper1 extends Mapper<Object, Text, IntWritable, IntWritable> {
         // Emits (a,b) *and* (b,a) any time a friend common to a and b is found.
-        public void map(Object key, Text values, Context context) throws IOException, InterruptedException {
+    	public void map(Object key, Text values, Context context) throws IOException, InterruptedException {
             // Key is ignored as it only stores the offset of the line in the text file
             StringTokenizer st = new StringTokenizer(values.toString());
             // seenFriends will store the friends we've already seen as we walk through the list of friends
             ArrayList<Integer> seenFriends = new ArrayList<Integer>(); 
+            ArrayList<Integer> existingfrens = new ArrayList<Integer>(); 
+
             // friend1 and friend2 will be the elements in the emitted pairs.
             IntWritable friend1 = new IntWritable();
             IntWritable friend2 = new IntWritable();
-            st.nextToken(); // discards first token (key)
+            IntWritable tempfren = new IntWritable();
+            //st.nextToken(); // discards first token (key)
+            
+            IntWritable key1 = new IntWritable();
+            key1.set(Integer.parseInt(st.nextToken()));
             while (st.hasMoreTokens()) {
-                // For every friend Fi found in the values,
-                // we emit (Fi,Fj) and (Fj,Fi) for every Fj in the 
-                // friends we have seen before. You can convince yourself
-                // that this will emit all (Fi,Fj) pairs for i!=j.
+                // If already following a friend ,it is flagged by -ve.
+           
                 friend1.set(Integer.parseInt(st.nextToken()));
-                for (Integer seenFriend : seenFriends) {
-                    friend2.set(seenFriend);
-                    context.write(friend1, friend2);
-                    context.write(friend2, friend1);
-                }
-                seenFriends.add(friend1.get());
+            	if (friend1.get() < 0 )  {
+            		existingfrens.add(friend1.get());
+            		context.write(key1, friend1);
+            		System.out.println("Neg"+key1+","+friend1);
+            	} 
+            	else {
+            		// For every friend Fi found in the values,
+                    // we emit (Fi,Fj) and (Fj,Fi) for every Fj in the 
+                    // friends we have seen before. You can convince yourself
+                    // that this will emit all (Fi,Fj) pairs for i!=j.
+            		for (Integer seenFriend : seenFriends) {
+                        friend2.set(seenFriend);
+                        context.write(friend1, friend2);
+                        context.write(friend2, friend1);
+                        System.out.println("R"+friend1+","+friend2);
+                        System.out.println("R"+friend2+","+friend1);
+                    }
+                    seenFriends.add(friend1.get());
+            		
+            	}
+                
             }
         }
     }
