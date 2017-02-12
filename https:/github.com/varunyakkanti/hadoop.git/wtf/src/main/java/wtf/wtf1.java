@@ -20,7 +20,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class wtf1 {
 
-    
+	private static final String OUTPUT_PATH = "intermediate_output42";
     /********************/
     /**    Mapper      **/
     /********************/
@@ -229,31 +229,35 @@ public class wtf1 {
     }
     
 
-    public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
-        Configuration conf = new Configuration();
+    public static int main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
+    	//First set of mapper/reducer
+    	Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "people you may know");
+	//	job.setJarByClass(Chain.class);
         job.setJarByClass(wtf1.class);
         job.setMapperClass(AllPairsMapper.class);
         job.setReducerClass(CountReducer.class);
         job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(IntWritable.class);
         FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[2]));
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+        FileOutputFormat.setOutputPath(job, new Path(OUTPUT_PATH));
+        job.waitForCompletion(true); ;
+		
+        //Second set of mapper/reducer
+		Configuration conf2 = new Configuration();;
+        Job job2 = new Job(conf2, "Job 2");
+        job2.setJarByClass(wtf1.class);
         
-        Configuration conf1 = new Configuration();
-        Job job1 = Job.getInstance(conf, "people you may know");
-        job1.setJarByClass(wtf1.class);
-        job1.setMapperClass(AllPairsMapper1.class);
-        job1.setReducerClass(CountReducer1.class);
-        job1.setOutputKeyClass(IntWritable.class);
-        job1.setOutputValueClass(IntWritable.class);
-        FileInputFormat.addInputPath(job1, new Path(args[2]));
-        FileOutputFormat.setOutputPath(job1, new Path(args[1]));
+        job2.setMapperClass(AllPairsMapper1.class);
+        job2.setReducerClass(CountReducer.class);
         
-        System.exit(job1.waitForCompletion(true) ? 0 : 1);
+        job2.setOutputKeyClass(IntWritable.class);
+        job2.setOutputValueClass(IntWritable.class);
+        
+        FileInputFormat.addInputPath(job2, new Path(OUTPUT_PATH));
+        FileOutputFormat.setOutputPath(job2, new Path(args[1]));
+        
+        return job2.waitForCompletion(true) ? 0 : 1;
     }
 
 }
-	
-	
