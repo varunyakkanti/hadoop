@@ -125,24 +125,26 @@ public class wtf1 {
     }
     public static class CountReducer1 extends Reducer<IntWritable, IntWritable, IntWritable, Text> {
 
-        // A private class to describe a recommendation.
+    	 // A private class to describe a recommendation.
         // A recommendation has a friend id and a number of friends in common.
         private static class Recommendation {
-            
+
             // Attributes
             private int friendId;
             private int nCommonFriends;
-            
+
             // Constructor
             public Recommendation(int friendId) {
                 this.friendId = friendId;
                 // A recommendation must have at least 1 common friend
                 this.nCommonFriends = 1;
             }
+
             // Getters
             public int getFriendId() {
                 return friendId;
             }
+
             public int getNCommonFriends() {
                 return nCommonFriends;
             }
@@ -152,42 +154,65 @@ public class wtf1 {
             public void addCommonFriend() {
                 nCommonFriends++;
             }
+
             // String representation used in the reduce output            
             public String toString() {
-                return friendId+"("+nCommonFriends+")";
+                return friendId + "(" + nCommonFriends + ")";
             }
+
             // Finds a representation in an array
             public static Recommendation find(int friendId, ArrayList<Recommendation> recommendations) {
-                for (Recommendation p : recommendations)
-                    if (p.getFriendId() == friendId)
+                for (Recommendation p : recommendations) {
+                    if (p.getFriendId() == friendId) {
                         return p;
+                    }
+                }
                 // Recommendation was not found!
                 return null;
             }
         }
 
-        // The reduce method
+        // The reduce method       
         public void reduce(IntWritable key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-            // user stores the id of the user for which we are searching for recommendations
             IntWritable user = key;
-            // recommendations will store all the recommendations for user 'user'
+            // 'existingFriends' will store the friends of user 'user'
+            // (the negative values in 'values').
+            ArrayList<Integer> existingFriends = new ArrayList<Integer>();
+            // 'recommendedUsers' will store the list of user ids recommended
+            // to user 'user'
+            ArrayList<Integer> recommendedUsers = new ArrayList<Integer>();
+            while (values.iterator().hasNext()) {
+                int value = values.iterator().next().get();
+                if (value > 0) {
+                    recommendedUsers.add(value);
+               } else {
+                   existingFriends.add(Math.abs(value));
+               }
+            }
+            // 'recommendedUsers' now contains all the positive values in 'values'.
+            // We need to remove from it every value -x where x is in existingFriends.
+            // See javadoc on Predicate: https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html
+            //for ( Integer friend : existingFriends) {
+                
+            recommendedUsers.removeAll(existingFriends);
+                
+             //   System.out.println("Remove lsit"+friend);
+            
+            
             ArrayList<Recommendation> recommendations = new ArrayList<Recommendation>();
             // Builds the recommendation array
-            while (values.iterator().hasNext()) {
-                int userWithCommonFriend = values.iterator().next().get();
-                Recommendation p = Recommendation.find(userWithCommonFriend, recommendations);
-                if (p == null)
-                    // no recommendation exists for user 'userWithCommonFriend'. Let's create one.
-                    recommendations.add(new Recommendation(userWithCommonFriend));
-                else
-                    // there is already a recommendation for user 'userWithCommonFriend'. Let;s
-                    // increment the number of friends in common.
+            for (Integer userId : recommendedUsers) {
+                Recommendation p = Recommendation.find(userId, recommendations);
+                if (p == null) {
+                    recommendations.add(new Recommendation(userId));
+                } else {
                     p.addCommonFriend();
-                System.out.println("mdmhfblskjdnvljsjvsljv");
+                }
             }
-            // Sorts the recommendation array by number of common friends
+            // Sorts the recommendation array
             // See javadoc on Comparator at https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html
             recommendations.sort(new Comparator<Recommendation>() {
+                //@Override
                 public int compare(Recommendation t, Recommendation t1) {
                     return -Integer.compare(t.getNCommonFriends(), t1.getNCommonFriends());
                 }
@@ -196,7 +221,7 @@ public class wtf1 {
             StringBuffer sb = new StringBuffer(""); // Using a StringBuffer is more efficient than concatenating strings
             for (int i = 0; i < recommendations.size() && i < 10; i++) {
                 Recommendation p = recommendations.get(i);
-                sb.append(p.toString()+" ");
+                sb.append(p.toString() + " ");
             }
             Text result = new Text(sb.toString());
             context.write(user, result);
