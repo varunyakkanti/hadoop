@@ -11,14 +11,16 @@ tfile1=sys.argv[1]
 tfile=sys.argv[2]
 textFile = sc.textFile(tfile1)
 val="achille"
+val2="Started"
 '''wordCount = textFile.map(lambda word:"iliad"if val in word else "a", 1).reduceByKey(lambda a, b: a+b)'''
-wordCount=textFile.filter(lambda word:val in word).filter(lambda value:"starting" in value)
 
+final=textFile.filter(lambda values:val2 in values)
+wordCount=final.filter(lambda word:val in word)
 wordCounts=wordCount.count()
 
 print wordCounts
 textFile2 = sc.textFile(tfile)
-wordCount2 = textFile2.filter(lambda word:val in word).filter(lambda value:"starting" in value)
-
-wordCounts2=wordCount2.count()
+wordCount2 = textFile2.filter(lambda word:val in word)
+final2=wordCount2.filter(lambda values:val2 in values)
+wordCounts2=final2.count()
 print wordCounts2
