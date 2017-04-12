@@ -10,8 +10,8 @@ sc = SparkContext(conf = sparkConf)
 tfile1=sys.argv[1]
 tfile=sys.argv[2]
 textFile = sc.textFile(tfile1)
-val="achille"
-val2="Started"
+val="of user achille"
+val2="Starting Session"
 '''wordCount = textFile.map(lambda word:"iliad"if val in word else "a", 1).reduceByKey(lambda a, b: a+b)'''
 
 final=textFile.filter(lambda values:val2 in values)
