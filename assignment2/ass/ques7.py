@@ -35,6 +35,6 @@ filter21= textFile2.filter(lambda word:val1 in word)
 filter22=filter21.filter(lambda word:val2 in word).map(lambda b:b.split())
 filter23=filter22.map(lambda a: str(parseLogLine(a)))
 filter24=filter23.distinct()
-collectdata = filter24.intersection(filter15).collect()
-
-print collectdata
+intersection = filter24.intersection(filter15).collect()
+print'Q7: users who started a session on both hosts, i.e., on exactly 2 hosts.'
+print '+ '+str(intersection)

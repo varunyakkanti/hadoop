@@ -8,7 +8,9 @@ sc = SparkContext(conf = sparkConf)
 
 # The WordCounts Spark program
 tfile1=sys.argv[1]
-tfile=sys.argv[2]
+tfile2=sys.argv[2]
+hostname1=os.path.basename(tfile1)
+hostname2=os.path.basename(tfile2)
 textFile = sc.textFile(tfile1)
 val="of user achille"
 val2="Starting Session"
@@ -18,9 +20,11 @@ final=textFile.filter(lambda values:val2 in values)
 wordCount=final.filter(lambda word:val in word)
 wordCounts=wordCount.count()
 
-print wordCounts
-textFile2 = sc.textFile(tfile)
+
+textFile2 = sc.textFile(tfile2)
 wordCount2 = textFile2.filter(lambda word:val in word)
 final2=wordCount2.filter(lambda values:val2 in values)
 wordCounts2=final2.count()
-print wordCounts2
+print '*Q2 sessions of user "achille"'
+print '+ '+hostname1+" "+str(wordCounts)
+print '+ '+hostname2+" "+str(wordCounts2)

@@ -41,6 +41,6 @@ filter16=filter15.subtract(filter24)
 filter17=filter16.map(lambda values:( values,val3))
 filter25=filter24.subtract(filter15)
 filter26=filter25.map(lambda values:( values,val4))
-
 filter=filter17.union(filter26)
-print filter.collect()
+print'* Q8: users who started a session on exactly one host, with host name.'
+print '+ '+str(filter.collect())

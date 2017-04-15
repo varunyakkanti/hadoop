@@ -7,13 +7,11 @@ import os
 import sys
 
 def parseLogLine(logline):
-    i=logline.index(': ')
     
-    newstring=logline[i+1:]
-    newstring=newstring.lower();
+    logline=logline.lower();
     
-    if 'error' in newstring:
-        return str(newstring)
+    if 'error' in logline:
+        return str(logline)
     else:
         return "none"
     
@@ -22,17 +20,30 @@ sparkConf = SparkConf().setAppName("WordCounts").setMaster("local")
 sc = SparkContext(conf = sparkConf)
 # The WordCounts Spark program
 tfile1=sys.argv[1]
-tfile=sys.argv[2]
+tfile2=sys.argv[2]
 #val1=os.path.basename(tfile1)
-
+hostname1=os.path.basename(tfile1)
+hostname2=os.path.basename(tfile2)
 val1=" "
-textFile = sc.textFile(tfile)
-filter11=textFile.map(lambda a: str(parseLogLine(a)))
-filter12=filter11.filter(lambda values:val1 in values)
-filter13=filter12.map(lambda values:(values,1)).reduceByKey(lambda a, b: a+b)
-filter14=filter13.map(lambda (a,b):(b,a)).sortByKey(0,1)
-for wc in filter14.take(5): print wc
+textFile = sc.textFile(tfile1)
+filter11=textFile.map(lambda x:x.split(None,4))
+filter12=filter11.map(lambda a: str(parseLogLine(a[4])))
+filter13=filter12.filter(lambda values:val1 in values)
+filter14=filter13.map(lambda values:(values,1)).reduceByKey(lambda a, b: a+b)
+filter15=filter14.map(lambda (a,b):(b,a)).sortByKey(0,1)
 
 
 
 
+
+textFile = sc.textFile(tfile2)
+filter21=textFile.map(lambda x:x.split(None,4))
+filter22=filter21.map(lambda a: str(parseLogLine(a[4])))
+filter23=filter22.filter(lambda values:val1 in values)
+filter24=filter23.map(lambda values:(values,1)).reduceByKey(lambda a, b: a+b)
+filter25=filter24.map(lambda (a,b):(b,a)).sortByKey(0,1)
+print'Q6 5 most frequent errors'
+print '+ ' +hostname1
+for wc in filter15.take(5): print wc
+print '+ ' +hostname2
+for wc in filter25.take(5): print wc

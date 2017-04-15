@@ -7,12 +7,8 @@ import os
 import sys
 
 def parseLogLine(logline):
-    i=logline.index(': ')
-    
-    newstring=logline[i+1:]
-    newstring=newstring.lower();
-    
-    if 'error' in newstring:
+    logline=logline.lower()
+    if 'error' in logline:
         return str(logline)
     else:
         return "none"
@@ -23,18 +19,27 @@ sc = SparkContext(conf = sparkConf)
 
 # The WordCounts Spark program
 tfile1=sys.argv[1]
-tfile=sys.argv[2]
+tfile2=sys.argv[2]
 #val1=os.path.basename(tfile1)
-val2="of user"
+hostname1=os.path.basename(tfile1)
+hostname2=os.path.basename(tfile2)
 val1=" "
-textFile = sc.textFile(tfile)
+textFile = sc.textFile(tfile1)
+
+filter11=textFile.map(lambda x:x.split(None,4))
+filter12=filter11.map(lambda a: str(parseLogLine(a[4])))
+filter13=filter12.filter(lambda values:val1 in values)
+count1=filter13.count()
 
 
-filter11=textFile.map(lambda a: str(parseLogLine(a)))
-filter12=filter11.filter(lambda values:val1 in values)
-count=filter12.count()
-print count
 
+textFile = sc.textFile(tfile2)
 
-
+filter21=textFile.map(lambda x:x.split(None,4))
+filter22=filter21.map(lambda a: str(parseLogLine(a[4])))
+filter23=filter22.filter(lambda values:val1 in values)
+count2=filter23.count()
+print 'Q5: number of errors'
+print '+ '+hostname1+' '+str(count1)
+print '+ '+hostname2+' '+str(count2)
 
