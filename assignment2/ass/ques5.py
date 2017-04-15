@@ -24,9 +24,9 @@ sc = SparkContext(conf = sparkConf)
 # The WordCounts Spark program
 tfile1=sys.argv[1]
 tfile=sys.argv[2]
-val1=os.path.basename(tfile)
+#val1=os.path.basename(tfile1)
 val2="of user"
-
+val1=" "
 textFile = sc.textFile(tfile)
 
 
