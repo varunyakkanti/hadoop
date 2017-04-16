@@ -9,7 +9,11 @@ def parseLogLine(logline):
     if 'Started' in logline:
         i=logline.index('user')
         return str(logline[i+1])
-    
+def changeusername(log,filter):
+    for value in filter:
+        if value[0] in log:
+            log = log.replace(value[0],value[1])
+    return log    
 # Configure the Spark environment
 sparkConf = SparkConf().setAppName("WordCounts").setMaster("local")
 sc = SparkContext(conf = sparkConf)
@@ -26,20 +30,20 @@ filter11=textFile.filter(lambda values:val1 in values)
 filter12=filter11.filter(lambda values:val2 in values)
 filter13=filter12.map(lambda b:b.split())
 filter14=filter13.map(lambda a: str(parseLogLine(a)))
-filter15=filter14.map(lambda x:(x,1))
-filter16=filter15.reduceByKey(lambda a,b:a+b)
-
-
+filter15=filter14.distinct().zipWithIndex()
+filter16=filter15.map(lambda x:(x[0],'user-'+str(x[1])))
+broadcast = sc.broadcast(filter16.collect())
+last1= textFile.map(lambda y:changeusername(y,broadcast.value))
 
 
 textFile2 = sc.textFile(tfile2)
 filter21= textFile2.filter(lambda word:val1 in word)
 filter22=filter21.filter(lambda word:val2 in word).map(lambda b:b.split())
 filter23=filter22.map(lambda a: str(parseLogLine(a)))
-filter24=filter23.map(lambda x:(x,1))
-filter25=filter24.reduceByKey(lambda a,b:a+b)
-print '*Q4 sessions for user '
-print '+ ' +hostname1
-for wc in filter16.collect(): print wc
-print '+ ' +hostname2
-for wc in filter25.collect(): print wc
+filter24=filter23.distinct().zipWithIndex()
+filter25=filter24.map(lambda x:(x[0],'user-'+str(x[1])))
+broadcast = sc.broadcast(filter25.collect())
+last2 = textFile.map(lambda y:changeusername(y,broadcast.value))
+print '*Q3 unique user names '
+print '+ '+hostname1+' '+str(last1)
+print '+ '+hostname2+' '+str(last2)
