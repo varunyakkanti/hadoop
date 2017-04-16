@@ -32,9 +32,10 @@ filter13=filter12.map(lambda b:b.split())
 filter14=filter13.map(lambda a: str(parseLogLine(a)))
 filter15=filter14.distinct().zipWithIndex()
 filter16=filter15.map(lambda x:(x[0],'user-'+str(x[1])))
+filter17=filter16.collect()
 broadcast = sc.broadcast(filter16.collect())
 last1= textFile.map(lambda y:changeusername(y,broadcast.value))
-
+last1.saveAsTextFile(sys.argv[1]+'-anonymized-10')
 
 textFile2 = sc.textFile(tfile2)
 filter21= textFile2.filter(lambda word:val1 in word)
@@ -42,8 +43,12 @@ filter22=filter21.filter(lambda word:val2 in word).map(lambda b:b.split())
 filter23=filter22.map(lambda a: str(parseLogLine(a)))
 filter24=filter23.distinct().zipWithIndex()
 filter25=filter24.map(lambda x:(x[0],'user-'+str(x[1])))
+filter26=filter25.collect()
 broadcast = sc.broadcast(filter25.collect())
 last2 = textFile.map(lambda y:changeusername(y,broadcast.value))
+last2.saveAsTextFile(sys.argv[2]+'-anonymized-10')
 print '*Q3 unique user names '
-print '+ '+hostname1+' '+str(last1)
-print '+ '+hostname2+' '+str(last2)
+print '+ '+hostname1+' '+str(filter17)
+print 'Anonymized files:' +hostname1+'-anonymized-10'
+print '+ '+hostname2+' '+str(filter26)
+print 'Anonymized files:' +hostname2+'-anonymized-10'
