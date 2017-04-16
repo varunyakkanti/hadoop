@@ -47,7 +47,7 @@ filter26=filter25.collect()
 broadcast = sc.broadcast(filter25.collect())
 last2 = textFile.map(lambda y:changeusername(y,broadcast.value))
 last2.saveAsTextFile(sys.argv[2]+'-anonymized-10')
-print '*Q3 unique user names '
+
 print '+ '+hostname1+' '+str(filter17)
 print 'Anonymized files:' +hostname1+'-anonymized-10'
 print '+ '+hostname2+' '+str(filter26)
