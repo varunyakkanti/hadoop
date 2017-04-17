@@ -15,7 +15,7 @@ def changeusername(log,filter):
             log = log.replace(value[0],value[1])
     return log    
 # Configure the Spark environment
-sparkConf = SparkConf().setAppName("WordCounts").setMaster("local")
+sparkConf = SparkConf().setAppName("Q9").setMaster("local")
 sc = SparkContext(conf = sparkConf)
 
 # The WordCounts Spark program

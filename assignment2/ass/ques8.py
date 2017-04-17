@@ -13,7 +13,7 @@ def parseLogLine(logline):
         return str(logline[i+1])
     
 # Configure the Spark environment
-sparkConf = SparkConf().setAppName("WordCounts").setMaster("local")
+sparkConf = SparkConf().setAppName("Q8").setMaster("local")
 sc = SparkContext(conf = sparkConf)
 
 # The WordCounts Spark program

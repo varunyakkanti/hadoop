@@ -16,7 +16,7 @@ def parseLogLine(logline):
         return "none"
     
 # Configure the Spark environment
-sparkConf = SparkConf().setAppName("WordCounts").setMaster("local")
+sparkConf = SparkConf().setAppName("Q6").setMaster("local")
 sc = SparkContext(conf = sparkConf)
 # The WordCounts Spark program
 tfile1=sys.argv[1]
