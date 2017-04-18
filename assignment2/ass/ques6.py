@@ -1,8 +1,5 @@
 from pyspark import SparkConf, SparkContext
-from collections import Counter
-from pyspark.sql.functions import size
-from pyspark.ml.feature import HashingTF, IDF, Tokenizer
-from pyspark.sql import Row
+
 import os
 import sys
 
