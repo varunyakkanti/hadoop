@@ -6,7 +6,9 @@ import sys
 def parseLogLine(logline):
     if 'Started' in logline:
         i=logline.index('user')
-        return str(logline[i+1])
+        z=logline[i+1]
+        z=z[:-1]
+        return str(z)
 def changeusername(log,filter):
     for value in filter:
         if value[0] in log:
@@ -31,8 +33,8 @@ filter14=filter13.map(lambda a: str(parseLogLine(a)))
 filter15=filter14.distinct().zipWithIndex()
 filter16=filter15.map(lambda x:(x[0],'user-'+str(x[1])))
 filter17=filter16.collect()
-broadcast = sc.broadcast(filter16.collect())
-last1= textFile.map(lambda y:changeusername(y,broadcast.value))
+broadcast1 = sc.broadcast(filter16.collect())
+last1= textFile.map(lambda y:changeusername(y,broadcast1.value))
 last1.saveAsTextFile(sys.argv[1]+'-anonymized-10')
 
 textFile2 = sc.textFile(tfile2)
@@ -42,8 +44,8 @@ filter23=filter22.map(lambda a: str(parseLogLine(a)))
 filter24=filter23.distinct().zipWithIndex()
 filter25=filter24.map(lambda x:(x[0],'user-'+str(x[1])))
 filter26=filter25.collect()
-broadcast = sc.broadcast(filter25.collect())
-last2 = textFile.map(lambda y:changeusername(y,broadcast.value))
+broadcast2 = sc.broadcast(filter25.collect())
+last2 = textFile2.map(lambda y:changeusername(y,broadcast2.value))
 last2.saveAsTextFile(sys.argv[2]+'-anonymized-10')
 
 print '+ '+hostname1+' '+str(filter17)
